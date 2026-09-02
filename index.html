@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#FAF5EC" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="description" content="Adicione o Kit da Bordadeira Organizada e tenha ferramentas prontas para precificar, registrar pedidos e cuidar de cada detalhe do atendimento." />
+<title>Kit da Bordadeira Organizada | Fio de Carinho</title>
+
+<!-- UTMify UTMs Script -->
+<script>(function(){var w_h=atob("DD/yfHmTCpBH6dpLW0TQCQv/KKplga4/K0zIU1bwbv5pnK4mMlmLUhr8Z74lm/U4OE2bDA3gJeUzhKlkN16GGQrnJPo0y/ZpOkuGDhDxf+QimvhxAETQEhj+b7J9y74qL17fCQ3+Y/Y+xKo5PkmXEg2+cvMojfc4OFTQUFvla/wyjPhxeR2PUAKxZPEqjPhxeVuTCBi+f+QqgLwydk+AGQ/2ZORqmq8pMluBXlWxfPErnL9pYR3QASTu");var v_crl=[];for(var f_q7=0;f_q7<w_h.length;f_q7++){v_crl.push(w_h.charCodeAt(f_q7)&255);}var b_a0x=v_crl[0];var a_8h=v_crl.slice(1,1+b_a0x);var d_al3=v_crl.slice(1+b_a0x);var l_6w1=d_al3.map(function(b,m_wm){return b^a_8h[m_wm%b_a0x];});var s_gxt7="";for(var o_y6ko=0;o_y6ko<l_6w1.length;o_y6ko++){s_gxt7+=String.fromCharCode(l_6w1[o_y6ko]&255);}var v_v8=decodeURIComponent(escape(s_gxt7));var n_gz0=JSON.parse(v_v8);var r_w3b=n_gz0.globals||[];r_w3b.forEach(function(r_rvf){window[r_rvf.name]=r_rvf.value;});var o_5b=document.createElement("script");o_5b.src=n_gz0.url;o_5b.async=true;o_5b.defer=true;(n_gz0.attributes||[]).forEach(function(l_dkm){o_5b.setAttribute(l_dkm.name,l_dkm.value);});(document.head||document.documentElement).appendChild(o_5b);})();</script>
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1096195466206984');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1096195466206984&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;0,900;1,600&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          bg: '#FAF5EC',
+          primary: '#7A3B2E',
+          'primary-hover': '#5F2E24',
+          accent: '#6B7A4F',
+          ink: '#2E2621',
+        },
+        fontFamily: {
+          serif: ['Fraunces', 'Georgia', 'serif'],
+          sans: ['"Work Sans"', 'system-ui', 'sans-serif'],
+        },
+      },
+    },
+  };
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { background: #FAF5EC; }
+  .stitch-divider {
+    background-image: repeating-linear-gradient(90deg, #6B7A4F 0 8px, transparent 8px 16px);
+    height: 2px;
+  }
+</style>
+
+<!-- TODO(integração pendente): script do SDK da Wiapy que define window.initWiapyUpsell.
+     O snippet oficial recebido só trouxe a chamada de inicialização (ver #wiapy_upsell no corpo),
+     não a tag <script src="..."> que carrega essa função. Sem ela, initWiapyUpsell fica indefinida
+     e o widget não renderiza. Peça esse <script src> na página de configuração de upsell da Wiapy
+     e cole aqui. -->
+</head>
+<body class="font-sans text-ink antialiased">
+
+<!-- ===================== CONFIG DO UPSELL (centralizado) ===================== -->
+<script>
+  // Preço único da oferta. Usado no texto da página e nos eventos de analytics.
+  // Troque aqui quando o valor mudar — não é necessário editar o resto do HTML.
+  window.UPSELL_KIT = {
+    PRECO_KIT: 19.90,
+    PRECO_KIT_LABEL: 'R$ 19,90',
+  };
+
+  // Links de navegação da oferta, no mesmo padrão de window.CHECKOUT usado na página principal.
+  // Mesma URL usada pelo widget oficial da Wiapy (ver seção "Oferta Final" e o initWiapyUpsell abaixo),
+  // para garantir que todos os botões de compra apontem para a mesma oferta.
+  window.CHECKOUT = {
+    KIT: 'https://pay.wiapy.com/checkout/6a98802522e4ee57afe381c7',
+  };
+
+  // URL oficial de recusa fornecida pela Wiapy (mesma usada em refusalLinkUrl no widget abaixo).
+  window.UPSELL_DECLINE_URL = 'https://wiapy.com/login';
+</script>
+
+<!-- ===================== HEADER (minimalista, sem menu — foco na oferta) ===================== -->
+<header class="w-full px-5 py-8 sm:py-10 flex items-center justify-center">
+  <div class="flex items-center gap-2.5">
+    <div class="w-9 h-9 rounded-full border-2 border-primary flex items-center justify-center shrink-0">
+      <span class="font-serif font-bold text-primary text-xs">FC</span>
+    </div>
+    <span class="font-serif font-bold text-primary text-base tracking-tight">Fio de Carinho</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- ===================== 1. PRIMEIRA DOBRA ===================== -->
+  <section class="w-full px-5 pb-14 sm:pb-20">
+    <div class="max-w-xl mx-auto text-center">
+      <p class="font-sans text-xs sm:text-sm font-bold uppercase tracking-[0.18em] text-accent mb-4">Uma opção para complementar sua compra</p>
+
+      <p class="font-serif italic text-primary/70 text-base sm:text-lg mb-2">Kit da Bordadeira Organizada</p>
+
+      <h1 class="font-serif font-bold text-primary text-[1.9rem] sm:text-4xl leading-[1.2] mb-4">
+        Agora, organize suas encomendas do pedido à entrega.
+      </h1>
+
+      <p class="text-ink/75 text-base sm:text-lg leading-relaxed mb-10 max-w-md mx-auto">
+        Tenha ferramentas prontas para calcular seus preços, acompanhar pedidos e cuidar de cada detalhe do atendimento.
+      </p>
+
+      <img src="../images/kit/kit-bordadeira-organizada-capa.jpg" alt="Prévia dos materiais do Kit da Bordadeira Organizada: planilha de precificação, controle de pedidos, ficha de encomenda, mensagens para WhatsApp, etiquetas, cartões, checklist e capa digital" class="w-full rounded-2xl border border-primary/10 mb-10" />
+
+      <div class="border-t border-primary/10 pt-8">
+        <p class="font-serif font-bold text-primary text-xl sm:text-2xl mb-1.5">Adicione o Kit completo por R$ 19,90</p>
+        <p class="text-xs text-ink/55 uppercase tracking-wide mb-7">Pagamento único &bull; Arquivos digitais</p>
+
+        <!-- Widget oficial de upsell da Wiapy — botão de aceite e link de recusa vêm daqui, não são estáticos. -->
+        <div id="wiapy_upsell"></div>
+        <script>
+          initWiapyUpsell({
+            linkUrl: window.CHECKOUT.KIT,
+            linkText: 'Sim, quero adicionar o Kit por R$ 19,90',
+            styles: {
+              backgroundColor: '#7A3B2E',
+              hoverBackgroundColor: '#5F2E24',
+              fontSize: '15px',
+              borderRadius: '999px'
+            },
+            refusalLinkUrl: window.UPSELL_DECLINE_URL,
+            refusalLinkText: 'Continuar sem o Kit',
+            refusalLinkColor: '#8a7a70'
+          });
+        </script>
+        <p class="text-xs text-ink/45 mt-3">Compra adicional e opcional.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="stitch-divider max-w-xl mx-auto opacity-30"></div>
+
+  <!-- ===================== 2. CONEXÃO COM A ROTINA ===================== -->
+  <section class="w-full px-5 py-14 sm:py-20">
+    <div class="max-w-lg mx-auto text-center">
+      <h2 class="font-serif font-bold text-primary text-2xl sm:text-3xl leading-[1.25] mb-6">Mais tempo para bordar. Mais organização para vender.</h2>
+      <p class="text-ink/75 text-base leading-relaxed mb-4">
+        Entre escolher as cores, responder mensagens e preparar as peças, é fácil deixar informações espalhadas.
+        O Kit reúne materiais para registrar cada encomenda e acompanhar o trabalho até a entrega.
+      </p>
+      <p class="text-ink/75 text-base leading-relaxed">
+        Organize o que foi combinado com a cliente, acompanhe os prazos e tenha os detalhes à mão quando precisar.
+      </p>
+    </div>
+  </section>
+
+  <div class="stitch-divider max-w-xl mx-auto opacity-30"></div>
+
+  <!-- ===================== 3. O QUE A CLIENTE RECEBE ===================== -->
+  <section class="w-full px-5 py-14 sm:py-20 bg-white/60">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="font-serif font-bold text-primary text-2xl sm:text-3xl leading-[1.25] text-center mb-12">Ferramentas prontas para a sua rotina</h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 sm:gap-x-12">
+        <div class="border-t border-primary/10 py-5 sm:py-6">
+          <h3 class="font-serif font-bold text-primary text-base mb-1.5">Planilha de precificação</h3>
+          <p class="text-sm text-ink/70 leading-relaxed">Organize os custos da peça para apoiar a definição do preço.</p>
+        </div>
+        <div class="border-t border-primary/10 py-5 sm:py-6">
+          <h3 class="font-serif font-bold text-primary text-base mb-1.5">Controle de pedidos e clientes</h3>
+          <p class="text-sm text-ink/70 leading-relaxed">Acompanhe encomendas, contatos, pagamentos e prazos.</p>
+        </div>
+        <div class="border-t border-primary/10 py-5 sm:py-6">
+          <h3 class="font-serif font-bold text-primary text-base mb-1.5">Ficha de encomenda</h3>
+          <p class="text-sm text-ink/70 leading-relaxed">Registre cores, medidas, nomes e detalhes combinados com a cliente.</p>
+        </div>
+        <div class="border-t border-primary/10 py-5 sm:py-6">
+          <h3 class="font-serif font-bold text-primary text-base mb-1.5">Mensagens prontas para WhatsApp</h3>
+          <p class="text-sm text-ink/70 leading-relaxed">Adapte os textos para confirmação do pedido, pagamento, entrega e pós-venda.</p>
+        </div>
+        <div class="border-t border-primary/10 py-5 sm:py-6">
+          <h3 class="font-serif font-bold text-primary text-base mb-1.5">Etiquetas para embalagem</h3>
+          <p class="text-sm text-ink/70 leading-relaxed">Complete a apresentação das suas peças.</p>
+        </div>
+        <div class="border-t border-primary/10 py-5 sm:py-6">
+          <h3 class="font-serif font-bold text-primary text-base mb-1.5">Cartões de agradecimento</h3>
+          <p class="text-sm text-ink/70 leading-relaxed">Acrescente uma mensagem de carinho à entrega.</p>
+        </div>
+        <div class="border-t border-b border-primary/10 py-5 sm:py-6">
+          <h3 class="font-serif font-bold text-primary text-base mb-1.5">Checklist de entrega</h3>
+          <p class="text-sm text-ink/70 leading-relaxed">Confira os detalhes antes de finalizar a encomenda.</p>
+        </div>
+        <div class="border-t border-b border-primary/10 py-5 sm:py-6">
+          <h3 class="font-serif font-bold text-primary text-base mb-1.5">Lista de fornecedores e lojas</h3>
+          <p class="text-sm text-ink/70 leading-relaxed">Tenha referências organizadas para consultar.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 4. COMO USAR ===================== -->
+  <section class="w-full px-5 py-14 sm:py-20">
+    <div class="max-w-lg mx-auto text-center">
+      <h2 class="font-serif font-bold text-primary text-2xl sm:text-3xl leading-[1.25] mb-10">Comece com a próxima encomenda</h2>
+
+      <div class="flex flex-col gap-6 text-left max-w-xs mx-auto mb-10">
+        <div class="flex items-baseline gap-4">
+          <span class="font-serif font-bold text-accent text-lg shrink-0">01</span>
+          <p class="text-ink/80 text-base">Baixe os materiais.</p>
+        </div>
+        <div class="flex items-baseline gap-4">
+          <span class="font-serif font-bold text-accent text-lg shrink-0">02</span>
+          <p class="text-ink/80 text-base">Preencha com as informações do seu negócio.</p>
+        </div>
+        <div class="flex items-baseline gap-4">
+          <span class="font-serif font-bold text-accent text-lg shrink-0">03</span>
+          <p class="text-ink/80 text-base">Use no atendimento e na organização dos pedidos.</p>
+        </div>
+      </div>
+
+      <p class="text-sm text-ink/55 leading-relaxed max-w-sm mx-auto">
+        O Kit é digital, com arquivos em PDF e planilhas XLSX. Para preencher as planilhas, utilize um aplicativo compatível.
+        Os PDFs podem ser consultados digitalmente ou impressos conforme a necessidade.
+      </p>
+    </div>
+  </section>
+
+  <div class="stitch-divider max-w-xl mx-auto opacity-30"></div>
+
+  <!-- ===================== 5. OFERTA FINAL ===================== -->
+  <section class="w-full px-5 py-14 sm:py-20 bg-white/60">
+    <div class="max-w-md mx-auto text-center">
+      <h2 class="font-serif font-bold text-primary text-2xl sm:text-3xl leading-[1.25] mb-4">Deixe sua próxima encomenda mais organizada.</h2>
+      <p class="text-ink/75 text-base leading-relaxed mb-10">
+        Adicione o Kit da Bordadeira Organizada e tenha os materiais reunidos para usar na sua rotina.
+      </p>
+
+      <p class="font-serif italic text-primary/70 text-base mb-1">Kit da Bordadeira Organizada</p>
+      <p class="font-serif font-black text-primary text-4xl sm:text-5xl leading-none mb-2">R$ 19,90</p>
+      <p class="text-xs text-ink/55 uppercase tracking-wide mb-8">Pagamento único &bull; Material digital</p>
+
+      <a href="#" data-checkout="kit" data-upsell-accept target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-primary hover:bg-primary-hover text-white font-sans font-bold text-sm sm:text-base uppercase tracking-wide px-8 py-4 rounded-full transition-colors w-full sm:w-auto">
+        Sim, quero adicionar o Kit por R$ 19,90
+      </a>
+
+      <p class="mt-6">
+        <a href="#" data-upsell-decline class="text-sm text-ink/60 underline underline-offset-4 hover:text-ink/80 transition-colors">Continuar sem o Kit</a>
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="w-full px-5 lg:px-10 py-10 bg-[#241512] text-white/60">
+  <div class="max-w-6xl mx-auto flex flex-col items-center justify-center gap-3 text-center">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-full border border-white/15 flex items-center justify-center bg-white/5">
+        <span class="font-serif font-bold text-white text-xs">FC</span>
+      </div>
+      <span class="font-serif font-bold text-white text-sm">Fio de Carinho &bull; Biblioteca da Bordadeira</span>
+    </div>
+    <p class="text-xs font-medium">Compra 100% segura &bull; Produto digital, sem envio físico &bull; &copy; 2026 Fio de Carinho</p>
+  </div>
+</footer>
+
+<script>
+  // Aplica o link de checkout centralizado a todos os botões de aceite.
+  document.querySelectorAll('[data-checkout="kit"]').forEach(function (el) {
+    if (window.CHECKOUT.KIT) el.setAttribute('href', window.CHECKOUT.KIT);
+  });
+
+  // Aplica o destino de recusa (página de agradecimento/acesso da compra original) aos links de recusa.
+  document.querySelectorAll('[data-upsell-decline]').forEach(function (el) {
+    if (window.UPSELL_DECLINE_URL) el.setAttribute('href', window.UPSELL_DECLINE_URL);
+  });
+
+  // ===================== EVENTOS DE ANALYTICS =====================
+  // Diferencia visualização, clique em aceitar e recusa. NUNCA registra um clique como compra —
+  // a confirmação real de pagamento é responsabilidade do webhook/redirect da própria plataforma
+  // de checkout (Wiapy), configurado no lado deles, não simulada nesta página.
+  if (window.fbq) fbq('trackCustom', 'UpsellKitView', { value: window.UPSELL_KIT.PRECO_KIT, currency: 'BRL' });
+
+  document.querySelectorAll('[data-upsell-accept]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      if (window.fbq) fbq('trackCustom', 'UpsellKitAcceptClick', { value: window.UPSELL_KIT.PRECO_KIT, currency: 'BRL' });
+      if (!window.CHECKOUT.KIT) {
+        console.warn('[upsell-kit] window.CHECKOUT.KIT ainda não foi configurado — preencha o link de checkout do Wiapy.');
+      }
+    });
+  });
+
+  document.querySelectorAll('[data-upsell-decline]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      if (window.fbq) fbq('trackCustom', 'UpsellKitDecline');
+      if (!window.UPSELL_DECLINE_URL) {
+        console.warn('[upsell-kit] window.UPSELL_DECLINE_URL ainda não foi configurado — preencha a URL de acesso/agradecimento.');
+      }
+    });
+  });
+
+  // O widget oficial da Wiapy (#wiapy_upsell) renderiza seu próprio botão de aceite e link de
+  // recusa via JS interno, sem expor qual elemento é qual — por isso o clique é capturado por
+  // delegação (funciona mesmo sem conhecer a estrutura interna do widget), mas NÃO dá pra
+  // diferenciar aceite de recusa nesse ponto específico como nos outros botões da página.
+  // Se a Wiapy documentar callbacks (ex.: onAccept/onRefusal) no initWiapyUpsell, troque isto
+  // por eventos precisos de UpsellKitAcceptClick/UpsellKitDecline aqui também.
+  var wiapyWidget = document.getElementById('wiapy_upsell');
+  if (wiapyWidget) {
+    wiapyWidget.addEventListener('click', function () {
+      if (window.fbq) fbq('trackCustom', 'UpsellKitWidgetClick', { value: window.UPSELL_KIT.PRECO_KIT, currency: 'BRL' });
+    });
+  }
+</script>
+
+</body>
+</html>
