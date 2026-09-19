@@ -58,13 +58,27 @@ src="https://www.facebook.com/tr?id=1096195466206984&ev=PageView&noscript=1"
     background-image: repeating-linear-gradient(90deg, #6B7A4F 0 8px, transparent 8px 16px);
     height: 2px;
   }
+  /* Prévias clicáveis: indicam que dá para ampliar, sem exigir hover (mobile-first). */
+  .zoomable { cursor: zoom-in; }
+  .zoom-hint {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; color: rgba(46,38,33,0.5); margin-top: 6px;
+  }
+  /* Lightbox simples, sem biblioteca externa. [hidden] precisa vencer o display:flex abaixo,
+     senão o overlay intercepta cliques na página mesmo escondido. */
+  #lightbox[hidden] { display: none; }
+  #lightbox {
+    position: fixed; inset: 0; z-index: 60; background: rgba(46,38,33,0.92);
+    display: flex; align-items: center; justify-content: center; padding: 24px;
+    padding: max(24px, env(safe-area-inset-top, 0px)) 24px max(24px, env(safe-area-inset-bottom, 0px));
+  }
+  #lightbox img { max-width: 100%; max-height: 88vh; border-radius: 8px; display: block; }
+  #lightbox-close {
+    position: absolute; top: max(16px, env(safe-area-inset-top, 0px)); right: 16px;
+    width: 40px; height: 40px; border-radius: 999px; background: rgba(255,255,255,0.12);
+    color: #fff; font-size: 22px; line-height: 1; border: none; cursor: pointer;
+  }
 </style>
-
-<!-- TODO(integração pendente): script do SDK da Wiapy que define window.initWiapyUpsell.
-     O snippet oficial recebido só trouxe a chamada de inicialização (ver #wiapy_upsell no corpo),
-     não a tag <script src="..."> que carrega essa função. Sem ela, initWiapyUpsell fica indefinida
-     e o widget não renderiza. Peça esse <script src> na página de configuração de upsell da Wiapy
-     e cole aqui. -->
 </head>
 <body class="font-sans text-ink antialiased">
 
@@ -78,8 +92,8 @@ src="https://www.facebook.com/tr?id=1096195466206984&ev=PageView&noscript=1"
   };
 
   // Links de navegação da oferta, no mesmo padrão de window.CHECKOUT usado na página principal.
-  // Mesma URL usada pelo widget oficial da Wiapy (ver seção "Oferta Final" e o initWiapyUpsell abaixo),
-  // para garantir que todos os botões de compra apontem para a mesma oferta.
+  // Mesma URL usada pelo widget oficial da Wiapy (ver seção da oferta e o initWiapyUpsell abaixo),
+  // para garantir que todos os pontos da página apontem para a mesma oferta.
   window.CHECKOUT = {
     KIT: 'https://pay.wiapy.com/checkout/6a98802522e4ee57afe381c7',
   };
@@ -100,10 +114,11 @@ src="https://www.facebook.com/tr?id=1096195466206984&ev=PageView&noscript=1"
 
 <main>
 
-  <!-- ===================== 1. PRIMEIRA DOBRA ===================== -->
-  <section class="w-full px-5 pb-14 sm:pb-20">
+  <!-- ===================== 1. ABERTURA + OFERTA E COMPRA ===================== -->
+  <!-- O widget oficial fica logo após uma apresentação curta, sem exigir rolar a página toda. -->
+  <section class="w-full px-5 pb-12 sm:pb-16">
     <div class="max-w-xl mx-auto text-center">
-      <p class="font-sans text-xs sm:text-sm font-bold uppercase tracking-[0.18em] text-accent mb-4">Uma opção para complementar sua compra</p>
+      <p class="font-sans text-xs sm:text-sm font-bold uppercase tracking-[0.18em] text-accent mb-4">Complemento da Biblioteca da Bordadeira</p>
 
       <p class="font-serif italic text-primary/70 text-base sm:text-lg mb-2">Kit da Bordadeira Organizada</p>
 
@@ -112,32 +127,76 @@ src="https://www.facebook.com/tr?id=1096195466206984&ev=PageView&noscript=1"
       </h1>
 
       <p class="text-ink/75 text-base sm:text-lg leading-relaxed mb-10 max-w-md mx-auto">
-        Tenha ferramentas prontas para calcular seus preços, acompanhar pedidos e cuidar de cada detalhe do atendimento.
+        Você já tem a Biblioteca da Bordadeira com os riscos para bordar. O Kit reúne ferramentas prontas para calcular seus preços, acompanhar pedidos e cuidar de cada detalhe do atendimento.
       </p>
 
-      <img src="../images/kit/kit-bordadeira-organizada-capa.jpg" alt="Prévia dos materiais do Kit da Bordadeira Organizada: planilha de precificação, controle de pedidos, ficha de encomenda, mensagens para WhatsApp, etiquetas, cartões, checklist e capa digital" class="w-full rounded-2xl border border-primary/10 mb-10" />
+      <img src="/images/kit/kit-completo-hero.webp" alt="Materiais reais do Kit da Bordadeira Organizada: capa, planilha de precificação, ficha de encomenda e cartão de agradecimento" width="1400" height="1039" fetchpriority="high" loading="eager" class="w-full h-auto rounded-2xl border border-primary/10 mb-2" />
+      <p class="text-[11px] text-ink/45 mb-10">Prévia com materiais reais do Kit. Produto 100% digital — arquivos em PDF e planilhas XLSX, sem envio físico.</p>
 
-      <div class="border-t border-primary/10 pt-8">
+      <div id="oferta" class="border-t border-primary/10 pt-8 scroll-mt-6">
         <p class="font-serif font-bold text-primary text-xl sm:text-2xl mb-1.5">Adicione o Kit completo por R$ 19,90</p>
         <p class="text-xs text-ink/55 uppercase tracking-wide mb-7">Pagamento único &bull; Arquivos digitais</p>
 
-        <!-- Widget oficial de upsell da Wiapy — botão de aceite e link de recusa vêm daqui, não são estáticos. -->
+        <!-- Widget oficial de upsell da Wiapy — botão de aceite e link de recusa são renderizados
+             por ele, não são estáticos. Mantido como o único elemento #wiapy_upsell da página. -->
         <div id="wiapy_upsell"></div>
+
+        <!-- Estado de erro: só aparece se o SDK da Wiapy não carregar/inicializar.
+             Garante que a área de compra nunca fique vazia. -->
+        <div id="wiapy_upsell_fallback" class="hidden mt-2 rounded-2xl border border-primary/15 bg-white/70 px-5 py-6">
+          <p class="text-sm text-ink/70 mb-4">Não foi possível carregar a opção de compra agora. Verifique sua conexão e tente novamente.</p>
+          <button type="button" id="wiapy_retry_btn" class="inline-flex items-center justify-center bg-primary hover:bg-primary-hover text-white font-sans font-bold text-sm uppercase tracking-wide px-6 py-3 rounded-full transition-colors w-full sm:w-auto">Tentar novamente</button>
+          <p class="mt-4">
+            <a href="#" data-upsell-decline class="text-sm text-ink/60 underline underline-offset-4 hover:text-ink/80 transition-colors">Continuar sem o Kit</a>
+          </p>
+        </div>
+
+        <!-- Script oficial da Wiapy: carregado de forma síncrona (sem async/defer), imediatamente
+             antes da chamada de initWiapyUpsell. Isso garante que a função já exista quando for
+             chamada, sem depender de timing, callback de onload ou espera arbitrária. -->
+        <script src="https://wiapy.com/sell/1.0.0/sell.min.js"></script>
         <script>
-          initWiapyUpsell({
-            linkUrl: window.CHECKOUT.KIT,
-            linkText: 'Sim, quero adicionar o Kit por R$ 19,90',
-            styles: {
-              backgroundColor: '#7A3B2E',
-              hoverBackgroundColor: '#5F2E24',
-              fontSize: '15px',
-              borderRadius: '999px'
-            },
-            refusalLinkUrl: window.UPSELL_DECLINE_URL,
-            refusalLinkText: 'Continuar sem o Kit',
-            refusalLinkColor: '#8a7a70'
-          });
+          (function () {
+            var fallbackEl = document.getElementById('wiapy_upsell_fallback');
+            function showFallback() {
+              if (fallbackEl) fallbackEl.classList.remove('hidden');
+            }
+
+            if (typeof window.initWiapyUpsell !== 'function') {
+              console.error('[upsell-kit] initWiapyUpsell não foi carregado pelo SDK da Wiapy (script https://wiapy.com/sell/1.0.0/sell.min.js).');
+              showFallback();
+            } else {
+              try {
+                window.initWiapyUpsell({
+                  linkUrl: window.CHECKOUT.KIT,
+                  linkText: 'Sim, quero adicionar o Kit por R$ 19,90',
+                  styles: {
+                    backgroundColor: '#7A3B2E',
+                    hoverBackgroundColor: '#5F2E24',
+                    fontSize: '15px',
+                    borderRadius: '999px'
+                  },
+                  refusalLinkUrl: window.UPSELL_DECLINE_URL,
+                  refusalLinkText: 'Continuar sem o Kit',
+                  refusalLinkColor: '#8a7a70'
+                });
+              } catch (err) {
+                console.error('[upsell-kit] Erro ao iniciar o widget da Wiapy:', err);
+                showFallback();
+              }
+            }
+
+            var retryBtn = document.getElementById('wiapy_retry_btn');
+            if (retryBtn) {
+              // Recarrega a página preservando a URL (e o parâmetro wiapy_sell, se presente),
+              // que é o que o SDK da Wiapy usa para religar a oferta à compra original.
+              retryBtn.addEventListener('click', function () {
+                window.location.reload();
+              });
+            }
+          })();
         </script>
+
         <p class="text-xs text-ink/45 mt-3">Compra adicional e opcional.</p>
       </div>
     </div>
@@ -145,66 +204,102 @@ src="https://www.facebook.com/tr?id=1096195466206984&ev=PageView&noscript=1"
 
   <div class="stitch-divider max-w-xl mx-auto opacity-30"></div>
 
-  <!-- ===================== 2. CONEXÃO COM A ROTINA ===================== -->
-  <section class="w-full px-5 py-14 sm:py-20">
-    <div class="max-w-lg mx-auto text-center">
-      <h2 class="font-serif font-bold text-primary text-2xl sm:text-3xl leading-[1.25] mb-6">Mais tempo para bordar. Mais organização para vender.</h2>
-      <p class="text-ink/75 text-base leading-relaxed mb-4">
-        Entre escolher as cores, responder mensagens e preparar as peças, é fácil deixar informações espalhadas.
-        O Kit reúne materiais para registrar cada encomenda e acompanhar o trabalho até a entrega.
+  <!-- ===================== 2. CONTEÚDO DO KIT ===================== -->
+  <!-- Cada material tem uma prévia real (recorte do PDF/planilha original) e um texto curto.
+       Planilhas usam dados de exemplo, sinalizados na própria imagem ("Exemplo de preenchimento").
+       Toque na imagem para ampliar (lightbox), sem carrossel automático. -->
+  <section class="w-full px-5 py-12 sm:py-16 bg-white/60">
+    <div class="max-w-2xl mx-auto">
+      <h2 class="font-serif font-bold text-primary text-2xl sm:text-3xl leading-[1.25] text-center mb-3">Ferramentas prontas para a sua rotina</h2>
+      <p class="text-ink/75 text-base leading-relaxed text-center max-w-lg mx-auto mb-12">
+        Entre escolher as cores, responder mensagens e preparar as peças, é fácil deixar informações espalhadas. Veja abaixo os materiais reais do Kit.
       </p>
-      <p class="text-ink/75 text-base leading-relaxed">
-        Organize o que foi combinado com a cliente, acompanhe os prazos e tenha os detalhes à mão quando precisar.
-      </p>
-    </div>
-  </section>
 
-  <div class="stitch-divider max-w-xl mx-auto opacity-30"></div>
+      <!-- Planilha de precificação -->
+      <div class="mb-12">
+        <h3 class="font-serif font-bold text-primary text-lg mb-1.5">Planilha de precificação</h3>
+        <p class="text-sm text-ink/70 leading-relaxed mb-4">Organize os custos da peça e chegue a um preço justo. Os campos em destaque já calculam o resultado sozinhos.</p>
+        <img data-zoomable src="/images/kit/kit-planilha.webp" alt="Planilha de precificação do Kit da Bordadeira Organizada, com dados de exemplo preenchidos" width="1300" height="885" loading="lazy" class="zoomable w-full h-auto rounded-2xl border border-primary/10" />
+        <p class="zoom-hint">Toque na imagem para ampliar &bull; valores de exemplo</p>
+      </div>
 
-  <!-- ===================== 3. O QUE A CLIENTE RECEBE ===================== -->
-  <section class="w-full px-5 py-14 sm:py-20 bg-white/60">
-    <div class="max-w-3xl mx-auto">
-      <h2 class="font-serif font-bold text-primary text-2xl sm:text-3xl leading-[1.25] text-center mb-12">Ferramentas prontas para a sua rotina</h2>
+      <!-- Controle de pedidos e clientes -->
+      <div class="mb-12">
+        <h3 class="font-serif font-bold text-primary text-lg mb-1.5">Controle de pedidos e clientes</h3>
+        <p class="text-sm text-ink/70 leading-relaxed mb-4">Acompanhe encomendas, valores e status num só lugar — com um painel que soma os totais automaticamente.</p>
+        <img data-zoomable src="/images/kit/kit-controle-pedidos.webp" alt="Planilha de controle de pedidos e clientes, com painel de totais e linhas de exemplo" width="1300" height="539" loading="lazy" class="zoomable w-full h-auto rounded-2xl border border-primary/10" />
+        <p class="zoom-hint">Toque na imagem para ampliar &bull; nomes fictícios de exemplo</p>
+      </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 sm:gap-x-12">
-        <div class="border-t border-primary/10 py-5 sm:py-6">
-          <h3 class="font-serif font-bold text-primary text-base mb-1.5">Planilha de precificação</h3>
-          <p class="text-sm text-ink/70 leading-relaxed">Organize os custos da peça para apoiar a definição do preço.</p>
+      <!-- CTA intermediário: fácil de encontrar sem rolar até o fim -->
+      <div class="text-center mb-12 py-6 border-y border-primary/10">
+        <p class="text-sm text-ink/70 mb-3">Já decidiu? O Kit completo sai por R$ 19,90.</p>
+        <a href="#oferta" data-upsell-secondary-cta class="inline-flex items-center justify-center bg-primary hover:bg-primary-hover text-white font-sans font-bold text-sm uppercase tracking-wide px-7 py-3.5 rounded-full transition-colors">Adicionar o Kit agora</a>
+      </div>
+
+      <!-- Ficha de encomenda -->
+      <div class="mb-12">
+        <h3 class="font-serif font-bold text-primary text-lg mb-1.5">Ficha de encomenda</h3>
+        <p class="text-sm text-ink/70 leading-relaxed mb-4">Registre cliente, tema, medidas, valor e sinal em um só documento para cada pedido confirmado.</p>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <img data-zoomable src="/images/kit/kit-ficha-completa.webp" alt="Página inteira da Ficha de Encomenda do Kit da Bordadeira Organizada" width="1000" height="1414" loading="lazy" class="zoomable w-full h-auto rounded-xl border border-primary/10" />
+            <p class="text-[11px] text-ink/45 mt-1.5">Ficha inteira</p>
+          </div>
+          <div>
+            <img data-zoomable src="/images/kit/kit-ficha-detalhe.webp" alt="Detalhe ampliado dos campos de cliente, produto, tema e cores da Ficha de Encomenda" width="1300" height="735" loading="lazy" class="zoomable w-full h-auto rounded-xl border border-primary/10" />
+            <p class="text-[11px] text-ink/45 mt-1.5">Detalhe dos campos</p>
+          </div>
         </div>
-        <div class="border-t border-primary/10 py-5 sm:py-6">
-          <h3 class="font-serif font-bold text-primary text-base mb-1.5">Controle de pedidos e clientes</h3>
-          <p class="text-sm text-ink/70 leading-relaxed">Acompanhe encomendas, contatos, pagamentos e prazos.</p>
+        <p class="zoom-hint">Toque em qualquer imagem para ampliar</p>
+      </div>
+
+      <!-- Mensagens prontas para WhatsApp -->
+      <div class="mb-12">
+        <h3 class="font-serif font-bold text-primary text-lg mb-1.5">Mensagens prontas para WhatsApp</h3>
+        <p class="text-sm text-ink/70 leading-relaxed mb-4">Modelos para personalizar em cada etapa da conversa — do primeiro contato ao pós-venda.</p>
+        <img data-zoomable src="/images/kit/kit-mensagens.webp" alt="Modelos reais de mensagens prontas para WhatsApp do Kit da Bordadeira Organizada, com campos entre colchetes para personalizar" width="1300" height="735" loading="lazy" class="zoomable w-full h-auto rounded-2xl border border-primary/10" />
+        <p class="zoom-hint">Toque na imagem para ampliar &bull; modelos para personalizar, não conversas reais</p>
+      </div>
+
+      <!-- Etiquetas e cartões de agradecimento -->
+      <div class="mb-12">
+        <h3 class="font-serif font-bold text-primary text-lg mb-1.5">Etiquetas e cartões de agradecimento</h3>
+        <p class="text-sm text-ink/70 leading-relaxed mb-4">Arquivos prontos para imprimir e recortar, para finalizar a embalagem com um toque de carinho.</p>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <img data-zoomable src="/images/kit/kit-etiquetas.webp" alt="Etiquetas para embalagem do Kit da Bordadeira Organizada, prontas para imprimir e recortar" width="1300" height="838" loading="lazy" class="zoomable w-full h-auto rounded-xl border border-primary/10" />
+            <p class="text-[11px] text-ink/45 mt-1.5">Etiquetas para imprimir</p>
+          </div>
+          <div>
+            <img src="/images/kit/kit-etiquetas-aplicacao.webp" alt="Aplicação ilustrativa de uma etiqueta e um cartão de agradecimento sobre uma embalagem" width="1300" height="924" loading="lazy" class="w-full h-auto rounded-xl border border-primary/10" />
+            <p class="text-[11px] text-ink/45 mt-1.5">Aplicação ilustrativa</p>
+          </div>
         </div>
-        <div class="border-t border-primary/10 py-5 sm:py-6">
-          <h3 class="font-serif font-bold text-primary text-base mb-1.5">Ficha de encomenda</h3>
-          <p class="text-sm text-ink/70 leading-relaxed">Registre cores, medidas, nomes e detalhes combinados com a cliente.</p>
+        <p class="zoom-hint">Arquivos para imprimir — não incluem envio de materiais físicos</p>
+      </div>
+
+      <!-- Checklist de entrega e fornecedores -->
+      <div>
+        <h3 class="font-serif font-bold text-primary text-lg mb-1.5">Checklist de entrega e lista de fornecedores</h3>
+        <p class="text-sm text-ink/70 leading-relaxed mb-4">Revise a peça, o pedido e o pagamento antes de entregar, e tenha lojas de referência para pesquisar materiais.</p>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <img data-zoomable src="/images/kit/kit-checklist.webp" alt="Checklist de entrega do Kit da Bordadeira Organizada, com seções de peça, pedido, pagamento e embalagem" width="1300" height="1093" loading="lazy" class="zoomable w-full h-auto rounded-xl border border-primary/10" />
+            <p class="text-[11px] text-ink/45 mt-1.5">Checklist de entrega</p>
+          </div>
+          <div>
+            <img data-zoomable src="/images/kit/kit-fornecedores.webp" alt="Lista de fornecedores e lojas para pesquisar materiais de bordado, do Kit da Bordadeira Organizada" width="1300" height="1114" loading="lazy" class="zoomable w-full h-auto rounded-xl border border-primary/10" />
+            <p class="text-[11px] text-ink/45 mt-1.5">Fornecedores e lojas</p>
+          </div>
         </div>
-        <div class="border-t border-primary/10 py-5 sm:py-6">
-          <h3 class="font-serif font-bold text-primary text-base mb-1.5">Mensagens prontas para WhatsApp</h3>
-          <p class="text-sm text-ink/70 leading-relaxed">Adapte os textos para confirmação do pedido, pagamento, entrega e pós-venda.</p>
-        </div>
-        <div class="border-t border-primary/10 py-5 sm:py-6">
-          <h3 class="font-serif font-bold text-primary text-base mb-1.5">Etiquetas para embalagem</h3>
-          <p class="text-sm text-ink/70 leading-relaxed">Complete a apresentação das suas peças.</p>
-        </div>
-        <div class="border-t border-primary/10 py-5 sm:py-6">
-          <h3 class="font-serif font-bold text-primary text-base mb-1.5">Cartões de agradecimento</h3>
-          <p class="text-sm text-ink/70 leading-relaxed">Acrescente uma mensagem de carinho à entrega.</p>
-        </div>
-        <div class="border-t border-b border-primary/10 py-5 sm:py-6">
-          <h3 class="font-serif font-bold text-primary text-base mb-1.5">Checklist de entrega</h3>
-          <p class="text-sm text-ink/70 leading-relaxed">Confira os detalhes antes de finalizar a encomenda.</p>
-        </div>
-        <div class="border-t border-b border-primary/10 py-5 sm:py-6">
-          <h3 class="font-serif font-bold text-primary text-base mb-1.5">Lista de fornecedores e lojas</h3>
-          <p class="text-sm text-ink/70 leading-relaxed">Tenha referências organizadas para consultar.</p>
-        </div>
+        <p class="zoom-hint">Toque em qualquer imagem para ampliar</p>
       </div>
     </div>
   </section>
 
-  <!-- ===================== 4. COMO USAR ===================== -->
-  <section class="w-full px-5 py-14 sm:py-20">
+  <!-- ===================== 3. COMO USAR ===================== -->
+  <section class="w-full px-5 py-12 sm:py-16">
     <div class="max-w-lg mx-auto text-center">
       <h2 class="font-serif font-bold text-primary text-2xl sm:text-3xl leading-[1.25] mb-10">Comece com a próxima encomenda</h2>
 
@@ -232,8 +327,8 @@ src="https://www.facebook.com/tr?id=1096195466206984&ev=PageView&noscript=1"
 
   <div class="stitch-divider max-w-xl mx-auto opacity-30"></div>
 
-  <!-- ===================== 5. OFERTA FINAL ===================== -->
-  <section class="w-full px-5 py-14 sm:py-20 bg-white/60">
+  <!-- ===================== 4. ENCERRAMENTO ===================== -->
+  <section class="w-full px-5 py-12 sm:py-16 bg-white/60">
     <div class="max-w-md mx-auto text-center">
       <h2 class="font-serif font-bold text-primary text-2xl sm:text-3xl leading-[1.25] mb-4">Deixe sua próxima encomenda mais organizada.</h2>
       <p class="text-ink/75 text-base leading-relaxed mb-10">
@@ -244,7 +339,9 @@ src="https://www.facebook.com/tr?id=1096195466206984&ev=PageView&noscript=1"
       <p class="font-serif font-black text-primary text-4xl sm:text-5xl leading-none mb-2">R$ 19,90</p>
       <p class="text-xs text-ink/55 uppercase tracking-wide mb-8">Pagamento único &bull; Material digital</p>
 
-      <a href="#" data-checkout="kit" data-upsell-accept target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-primary hover:bg-primary-hover text-white font-sans font-bold text-sm sm:text-base uppercase tracking-wide px-8 py-4 rounded-full transition-colors w-full sm:w-auto">
+      <!-- Este CTA apenas rola a página até o widget oficial (#oferta). Não abre checkout em
+           outra aba nem simula um aceite — o aceite real só acontece pelo botão da Wiapy. -->
+      <a href="#oferta" data-upsell-secondary-cta class="inline-flex items-center justify-center bg-primary hover:bg-primary-hover text-white font-sans font-bold text-sm sm:text-base uppercase tracking-wide px-8 py-4 rounded-full transition-colors w-full sm:w-auto">
         Sim, quero adicionar o Kit por R$ 19,90
       </a>
 
@@ -269,29 +366,31 @@ src="https://www.facebook.com/tr?id=1096195466206984&ev=PageView&noscript=1"
   </div>
 </footer>
 
-<script>
-  // Aplica o link de checkout centralizado a todos os botões de aceite.
-  document.querySelectorAll('[data-checkout="kit"]').forEach(function (el) {
-    if (window.CHECKOUT.KIT) el.setAttribute('href', window.CHECKOUT.KIT);
-  });
+<!-- Lightbox: oculto por padrão, mostrado via JS ao tocar numa prévia ampliável. Fica ANTES do
+     <script> abaixo, que precisa encontrar #lightbox/#lightbox-close já no DOM ao ser executado. -->
+<div id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Prévia ampliada">
+  <button type="button" id="lightbox-close" aria-label="Fechar">&times;</button>
+  <img id="lightbox-img" src="" alt="" />
+</div>
 
-  // Aplica o destino de recusa (página de agradecimento/acesso da compra original) aos links de recusa.
+<script>
+  // Aplica o destino de recusa (página de agradecimento/acesso da compra original) aos links de
+  // recusa estáticos desta página (o link de recusa dentro do widget da Wiapy é dele mesmo).
   document.querySelectorAll('[data-upsell-decline]').forEach(function (el) {
     if (window.UPSELL_DECLINE_URL) el.setAttribute('href', window.UPSELL_DECLINE_URL);
   });
 
   // ===================== EVENTOS DE ANALYTICS =====================
-  // Diferencia visualização, clique em aceitar e recusa. NUNCA registra um clique como compra —
-  // a confirmação real de pagamento é responsabilidade do webhook/redirect da própria plataforma
-  // de checkout (Wiapy), configurado no lado deles, não simulada nesta página.
+  // Diferencia visualização, clique nos CTAs que levam à oferta e recusa. NUNCA registra um
+  // clique como compra — a confirmação real de pagamento é responsabilidade do
+  // webhook/redirect da própria Wiapy (ver api/webhook/wiapy.js), não simulada nesta página.
   if (window.fbq) fbq('trackCustom', 'UpsellKitView', { value: window.UPSELL_KIT.PRECO_KIT, currency: 'BRL' });
 
-  document.querySelectorAll('[data-upsell-accept]').forEach(function (el) {
+  // CTAs secundários (fora do widget) só rolam a página até a oferta/widget oficial — não abrem
+  // checkout em outra aba nem simulam aceite. O evento marca apenas o clique no CTA.
+  document.querySelectorAll('[data-upsell-secondary-cta]').forEach(function (el) {
     el.addEventListener('click', function () {
-      if (window.fbq) fbq('trackCustom', 'UpsellKitAcceptClick', { value: window.UPSELL_KIT.PRECO_KIT, currency: 'BRL' });
-      if (!window.CHECKOUT.KIT) {
-        console.warn('[upsell-kit] window.CHECKOUT.KIT ainda não foi configurado — preencha o link de checkout do Wiapy.');
-      }
+      if (window.fbq) fbq('trackCustom', 'UpsellKitSecondaryCtaClick', { value: window.UPSELL_KIT.PRECO_KIT, currency: 'BRL' });
     });
   });
 
@@ -306,16 +405,47 @@ src="https://www.facebook.com/tr?id=1096195466206984&ev=PageView&noscript=1"
 
   // O widget oficial da Wiapy (#wiapy_upsell) renderiza seu próprio botão de aceite e link de
   // recusa via JS interno, sem expor qual elemento é qual — por isso o clique é capturado por
-  // delegação (funciona mesmo sem conhecer a estrutura interna do widget), mas NÃO dá pra
-  // diferenciar aceite de recusa nesse ponto específico como nos outros botões da página.
-  // Se a Wiapy documentar callbacks (ex.: onAccept/onRefusal) no initWiapyUpsell, troque isto
-  // por eventos precisos de UpsellKitAcceptClick/UpsellKitDecline aqui também.
+  // delegação (funciona mesmo sem conhecer a estrutura interna do widget).
+  // Limitação verificada no código-fonte do SDK (sell.min.js): o botão de aceite e o link de
+  // recusa apenas fazem window.location = <url configurada> — não existe callback
+  // (onAccept/onRefusal) exposto em initWiapyUpsell. Por isso NÃO é possível diferenciar aceite
+  // de recusa a partir do JS desta página; o evento abaixo é intencionalmente ambíguo e não deve
+  // ser tratado como conversão. Se a Wiapy passar a expor callbacks em uma versão futura do SDK,
+  // troque isto por eventos precisos de UpsellKitAcceptClick/UpsellKitDecline.
   var wiapyWidget = document.getElementById('wiapy_upsell');
   if (wiapyWidget) {
     wiapyWidget.addEventListener('click', function () {
       if (window.fbq) fbq('trackCustom', 'UpsellKitWidgetClick', { value: window.UPSELL_KIT.PRECO_KIT, currency: 'BRL' });
     });
   }
+
+  // ===================== LIGHTBOX DAS PRÉVIAS =====================
+  // Amplia a imagem real com um toque, sem carrossel e sem biblioteca externa.
+  var lightbox = document.getElementById('lightbox');
+  var lightboxImg = document.getElementById('lightbox-img');
+  function openLightbox(src, alt) {
+    lightboxImg.src = src;
+    lightboxImg.alt = alt || '';
+    lightbox.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    lightbox.hidden = true;
+    lightboxImg.src = '';
+    document.body.style.overflow = '';
+  }
+  document.querySelectorAll('img[data-zoomable]').forEach(function (img) {
+    img.addEventListener('click', function () {
+      openLightbox(img.currentSrc || img.src, img.alt);
+    });
+  });
+  document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', function (e) {
+    if (e.target === lightbox) closeLightbox();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !lightbox.hidden) closeLightbox();
+  });
 </script>
 
 </body>
